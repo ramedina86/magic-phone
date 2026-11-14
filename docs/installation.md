@@ -23,3 +23,7 @@ Stop calls and select the exact backup path reported by deploy. With root privil
 - Arbitrary numbers and 112 must have no route; transfers/redirects must not escape the allowed destinations.
 - Repeat deployment and compare include counts; verify no AstDB loss, stale audio retained, unrelated files unchanged. Exercise manual rollback.
 - Check `git status --ignored`: only placeholder.wav is trackable audio; private credentials/numbers remain ignored.
+
+## Reusing an existing handset
+
+Choose `existing` handset mode in configure to preserve its authentication and AoR configuration. Before deploying, back up its owning config and change that endpoint's context to `magic-phone`, set `allow_transfer=no`, `allow_subscribe=no`, `direct_media=no`, and allow `g722,ulaw,alaw`. Reload PJSIP and verify those fields. This temporarily disables handset features until the project dialplan is deployed. Existing mode does not generate or overwrite that endpoint/auth/AoR; it checks the loaded context and transfer restriction. Keep the migration backup separately for rollback. Managed mode remains the default for a new endpoint.

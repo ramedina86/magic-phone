@@ -11,6 +11,7 @@ render() {
   for n in 201 202 203 204 205; do printf 'MAGIC_CONTACT_%s=%s\n' "$n" "$(get CONTACT_$n)"; done
  } > "$dest/settings.conf"
  {
+ if [[ $(get PHONE_MODE) != existing ]]; then
  cat <<LOCAL
 [$user]
 type=endpoint
@@ -40,6 +41,7 @@ max_contacts=1
 remove_existing=yes
 qualify_frequency=60
 LOCAL
+ fi
  if [[ $(get PROVIDER_ENABLED) == yes ]]; then
  cat <<TRUNK
 

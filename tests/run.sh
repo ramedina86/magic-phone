@@ -55,3 +55,9 @@ grep -q '^server_uri=sip:example.invalid$' "$TMP/rendered/pjsip-private.conf"
 grep -q '^context=magic-reject-inbound$' "$TMP/rendered/pjsip-private.conf"
 grep -q '^MAGIC_DIAL_FORMAT=digits$' "$TMP/rendered/settings.conf"
 printf 'Provider rendering passed using synthetic example.invalid data.\n'
+printf 'PHONE_MODE=existing\n' >> "$PRIVATE/settings"
+private_check
+render "$TMP/rendered"
+! grep -q '^\[100\]' "$TMP/rendered/pjsip-private.conf"
+! grep -q '^\[magic-phone-auth\]' "$TMP/rendered/pjsip-private.conf"
+printf 'Existing handset mode preserves external endpoint/auth configuration.\n'

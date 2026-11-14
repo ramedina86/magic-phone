@@ -7,6 +7,7 @@ warn() { printf 'WARNING: %s\n' "$*" >&2; }
 cli() { "$AST" "${AST_ARGS[@]}" -rx "$1"; }
 detect() {
  AST=${ASTERISK_BIN:-$(command -v asterisk || true)}
+ if [[ -z $AST && -x /usr/sbin/asterisk ]]; then AST=/usr/sbin/asterisk; fi
  [[ -n $AST && -x $AST ]] || die 'Asterisk missing; install/build Asterisk 22 separately.'
  AST_ARGS=(); [[ -z ${ASTERISK_CONFIG:-} ]] || AST_ARGS=(-C "$ASTERISK_CONFIG")
  [[ $("$AST" -V) == 'Asterisk 22.'* ]] || die 'Asterisk 22.x required.'
@@ -14,7 +15,7 @@ detect() {
  info=$(cli 'core show settings') || die 'Cannot connect to Asterisk; check CLI socket permissions/service.'
  CONF=$(printf '%s\n' "$info" | sed -n 's/^[[:space:]]*Configuration directory:[[:space:]]*//p')
  DATA=$(printf '%s\n' "$info" | sed -n 's/^[[:space:]]*Data directory:[[:space:]]*//p')
- DBPATH=$(printf '%s\n' "$info" | sed -n 's/^[[:space:]]*Database:[[:space:]]*//p')
+ DBPATH=$(printf '%s\n' "$info" | sed -n 's/^[[:space:]]*ASTDB:[[:space:]]*//p')
  [[ $CONF == /* && $DATA == /* && -d $CONF && -d $DATA ]] || die 'Cannot detect configuration/data directories from core show settings.'
  [[ $CONF != *[[:space:]\"\#]* && $DATA != *[[:space:]\"\#]* ]] || die 'Paths with whitespace/quotes/# are unsupported.'
  SOUND=$DATA/sounds/custom/magic-phone
@@ -30,6 +31,7 @@ get() { sed -n "s/^$1=//p" "$PRIVATE/settings"; }
 valid_value() {
  local key=$1 val=$2
  case $key in
+ PHONE_MODE) [[ $val == managed || $val == existing ]] ;;
  PHONE_USER) [[ $val =~ ^[0-9]{1,12}$ ]] ;;
  PHONE_PASSWORD|PROVIDER_PASSWORD) [[ $val =~ ^[a-zA-Z0-9_+./@=-]{16,128}$ ]] ;;
  TRANSPORT|PROVIDER_USER) [[ $val =~ ^[a-zA-Z0-9_.-]+$ ]] ;;
@@ -52,9 +54,12 @@ private_check() {
   seen+="$key|"
   valid_value "$key" "$val" || die "Invalid private setting: $key (value hidden)."
  done < "$PRIVATE/settings"
- for key in PHONE_USER PHONE_PASSWORD TRANSPORT MAX_SECONDS RING_SECONDS PROVIDER_ENABLED; do
+ for key in PHONE_USER TRANSPORT MAX_SECONDS RING_SECONDS PROVIDER_ENABLED; do
   [[ -n $(get "$key") ]] || die "Missing $key"
  done
+ if [[ $(get PHONE_MODE) != existing ]]; then
+  [[ -n $(get PHONE_PASSWORD) ]] || die 'Missing PHONE_PASSWORD'
+ fi
  if [[ $(get PROVIDER_ENABLED) == yes ]]; then
   for key in DOMAIN PROVIDER_USER PROVIDER_PASSWORD REGISTER DIAL_FORMAT SEND_PAI CALLER_ID; do
    [[ -n $(get "$key") ]] || die "Provider requires $key"

@@ -26,7 +26,10 @@ ask() {
  done
 }
 ask PHONE_USER 'Handset SIP username [100]' 100
-ask PHONE_PASSWORD 'Handset password' '' yes
+ask PHONE_MODE 'Handset mode: managed or existing [managed]' managed
+if [[ $(sed -n 's/^PHONE_MODE=//p' "$TMP") != existing ]]; then
+ ask PHONE_PASSWORD 'Handset password' '' yes
+fi
 ask TRANSPORT 'Existing PJSIP transport name (from pjsip show transports)'
 ask MAX_SECONDS 'Maximum answered call seconds [1800]' 1800
 ask RING_SECONDS 'Ring timeout seconds [30]' 30

@@ -22,9 +22,17 @@ done
 transport=$(cli "pjsip show transport $(get TRANSPORT)")
 [[ $transport == *'bind'* ]] || die 'Choose an existing loaded transport.'
 # Reject namespace/endpoint collisions outside our owned includes, including nested files.
+phone_pattern="$(get PHONE_USER)|"
+if [[ $(get PHONE_MODE) == existing ]]; then
+ phone_pattern=''
+ endpoint=$(cli "pjsip show endpoint $(get PHONE_USER)")
+ [[ $endpoint =~ context[[:space:]]*:[[:space:]]*magic-phone ]] || die 'Existing endpoint must first be migrated to context magic-phone.'
+ [[ $endpoint =~ allow_transfer[[:space:]]*:[[:space:]]*false ]] || die 'Disable transfers on the existing endpoint first.'
+fi
 while IFS= read -r -d '' f; do
  [[ $f == "$CONF/magic-phone/"* ]] && continue
- if grep -Eq "^\[($(get PHONE_USER)|magic-phone|magic-rotation|magic-family|magic-reject-inbound|magic-trunk[^]]*)\]" "$f"; then
+ [[ $f != "$CONF/.magic-phone-"* ]] || continue
+ if grep -Eq "^\[(${phone_pattern}magic-phone|magic-rotation|magic-family|magic-reject-inbound|magic-trunk[^]]*)\]" "$f"; then
   die 'Existing endpoint or magic namespace found outside owned files. Review/migrate it before deployment.'
  fi
 done < <(find "$CONF" -name '*.conf' -type f -print0)
