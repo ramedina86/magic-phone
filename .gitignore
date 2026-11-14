@@ -1,0 +1,9 @@
+.private/
+backups/
+.env
+config/settings
+audio/**
+!audio/**/
+!audio/**/.gitkeep
+!audio/welcome/placeholder.wav
+.DS_Store

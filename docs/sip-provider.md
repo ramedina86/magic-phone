@@ -1,0 +1,9 @@
+# HaloNet: verify before enabling
+
+No account-specific hostname, IP, caller ID or credentials are assumed. Obtain the actual SIP domain, authentication username/password, registration requirement, client URI identity, outbound dialing format and authorized caller ID from the approved HaloNet account/support. Confirm whether P-Asserted-Identity is required. Configure supports E.164 with +, digits without +, or 00 prefix, translated only at the trunk boundary.
+
+The generated baseline uses the same username for authentication, From user and registration client URI, the same SIP host for registrar/AoR/From domain, and your existing transport. If your account requires separate identities, proxy, TLS-specific settings or a different registration URI, this baseline is insufficient: keep provider disabled and extend/review the template with verified values. Do not guess provider parameters. Templates contain REPLACE_ME and are illustrative, not installed directly.
+
+Registration is optional and does not itself authorize inbound calls. The trunk context rejects inbound calls. There is no inbound DID handling or IP-identify route. Endpoint supports ulaw/alaw/g722, symmetric RTP, force_rport and rewrite_contact, with direct media disabled. Existing transport NAT parameters remain your responsibility. Verify registration, outbound caller ID and two-way audio from the private LAN; no internet SIP/RTP port forwarding is needed by default. Confirm spending controls with HaloNet.
+
+Reference: [Asterisk outbound registrations](https://docs.asterisk.org/Configuration/Channel-Drivers/SIP/Configuring-res_pjsip/Configuring-Outbound-Registrations/) and [Dial options](https://docs.asterisk.org/Asterisk_22_Documentation/API_Documentation/Dialplan_Applications/Dial/). The `i` option ignores forwarding requests and `L` caps answered call duration in milliseconds.

@@ -1,0 +1,7 @@
+# configure.sh writes validated key=value data to ignored .private/settings.
+PHONE_USER=100
+TRANSPORT=REPLACE_ME_EXISTING_TRANSPORT
+MAX_SECONDS=1800
+RING_SECONDS=30
+PROVIDER_ENABLED=no
+# Track counts are derived at deploy time; empty folders disable that feature.

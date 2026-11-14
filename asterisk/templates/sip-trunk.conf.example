@@ -1,0 +1,19 @@
+; Account-specific, unverified placeholders; never include this file directly.
+[magic-trunk]
+type=endpoint
+context=magic-reject-inbound
+transport=REPLACE_ME_EXISTING_TRANSPORT
+outbound_auth=magic-trunk-auth
+aors=magic-trunk-aor
+from_user=REPLACE_ME
+from_domain=REPLACE_ME
+[magic-trunk-auth]
+type=auth
+auth_type=userpass
+username=REPLACE_ME
+password=REPLACE_ME
+[magic-trunk-aor]
+type=aor
+contact=sip:REPLACE_ME
+; Optional registration uses server_uri=sip:REPLACE_ME and
+; client_uri=sip:REPLACE_ME@REPLACE_ME. Confirm with HaloNet first.

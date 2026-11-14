@@ -1,0 +1,19 @@
+; Illustrative only. configure/deploy generate validated private fragments.
+[100]
+type=endpoint
+transport=REPLACE_ME_EXISTING_TRANSPORT
+context=magic-phone
+disallow=all
+allow=g722,ulaw,alaw
+auth=magic-phone-auth
+aors=100
+direct_media=no
+allow_transfer=no
+[100]
+type=aor
+max_contacts=1
+[magic-phone-auth]
+type=auth
+auth_type=userpass
+username=100
+password=REPLACE_ME
