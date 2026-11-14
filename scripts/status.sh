@@ -7,7 +7,13 @@ printf 'Asterisk 22 reachable.\n'
 command -v systemctl >/dev/null && systemctl is-active asterisk.service || true
 # Filter potentially sensitive CLI output, never print contact URIs/caller IDs.
 out=$(cli "pjsip show aor $(get PHONE_USER)")
-if [[ $out == *'Avail'* ]]; then printf 'Handset: reachable\n'; else printf 'Handset: unavailable/unregistered\n'; fi
+if [[ $out == *'Avail'* ]]; then
+ printf 'Handset: reachable\n'
+elif [[ $out == *'NonQual'* ]]; then
+ printf 'Handset: registered (reachability probing disabled)\n'
+else
+ printf 'Handset: unavailable/unregistered\n'
+fi
 out=$(cli 'pjsip show registration magic-trunk-registration')
 if [[ $out == *'Registered'* ]]; then printf 'Provider: registered\n'; else printf 'Provider: not registered (may be disabled or registration not required)\n'; fi
 cli 'core show channels count' | grep -E '^[0-9]+ (active|calls)' || true
