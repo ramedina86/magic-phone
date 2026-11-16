@@ -1,0 +1,29 @@
+[Unit]
+Description=Little notes LAN service
+After=network.target
+
+[Service]
+Type=simple
+User=littlenotes
+Group=littlenotes
+WorkingDirectory=/opt/little-notes
+ExecStart=/usr/bin/python3 /opt/little-notes/server.py --host 127.0.0.1 --port 8787 --db /var/lib/little-notes/notes.sqlite3
+Restart=on-failure
+RestartSec=3
+StateDirectory=little-notes
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryMax=96M
+TasksMax=32
+
+[Install]
+WantedBy=multi-user.target

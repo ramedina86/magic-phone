@@ -7,3 +7,8 @@ audio/**
 !audio/**/.gitkeep
 !audio/welcome/placeholder.wav
 .DS_Store
+# Notes service runtime data remains local.
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+__pycache__/
