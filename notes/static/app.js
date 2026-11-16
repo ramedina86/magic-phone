@@ -37,11 +37,11 @@ function render() {
     const time = element('time', '', new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date));
     time.dateTime = note.created_at;
     top.append(time);
-    if (note.highlighted) top.append(element('span', 'highlight-label', '✦ Highlighted'));
+    if (note.highlighted) card.setAttribute('aria-label', 'Earmarked note');
     const content = element('p', 'note-text', note.text);
     const bottom = element('div', 'note-bottom');
     const actions = element('div', 'note-options');
-    const highlight = element('button', `note-action${note.highlighted ? ' active' : ''}`, note.highlighted ? '✦ Unhighlight' : '✧ Highlight');
+    const highlight = element('button', `note-action${note.highlighted ? ' active' : ''}`, note.highlighted ? 'Remove earmark' : 'Earmark');
     highlight.setAttribute('aria-pressed', String(note.highlighted));
     highlight.addEventListener('click', async () => {
       highlight.disabled = true;
@@ -50,7 +50,7 @@ function render() {
         notes = notes.map(item => item.id === note.id ? updated : item);
         render();
         document.querySelector(`[data-highlight="${note.id}"]`)?.focus();
-        message(updated.highlighted ? 'A little more prominent.' : 'Highlight removed.');
+        message(updated.highlighted ? 'Note earmarked.' : 'Earmark removed.');
       } catch (error) { message(error.message, true); highlight.disabled = false; }
     });
     highlight.dataset.highlight = note.id;
